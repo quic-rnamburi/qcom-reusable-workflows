@@ -16,6 +16,8 @@ The main orchestrator workflow is `reusable-qcom-preflight-checks-orchestrator.y
 4. **Copyright and License Check** - Verifies proper copyright and license notices
 5. **Commit Email Check** - Validates commit author emails
 6. **Commit Message Check** - Ensures commit messages follow standards (optional)
+7. **ARMOR Checkers** - Ensures source code follows API/ABI backward compatibility
+
 
 ## Usage
 
@@ -41,6 +43,7 @@ jobs:
       enable-copyright-license-check: true
       enable-commit-email-check: true
       enable-commit-msg-check: false
+      enable-armor-checkers: true
     permissions:
       contents: read
       security-events: write
@@ -133,6 +136,11 @@ The workflow:
       {"body-char-limit": 60, "sub-char-limit": 50, "check-blank-line": true}
       ```
   - Runs only on pull request events
+
+- **ARMOR Checkers**: Ensures source-level (API) and binary-level (ABI) backward compatibility of source code using [armor-checkers-action](https://github.com/qualcomm/armor-checkers)
+  - **Configuration Options:**
+    - `enable-armor-checkers`: Boolean to enable/disable the check (default: `true`)
+  - Runs on both push and pull request events
 
 For detailed configuration options and default values for each action, please refer to their respective GitHub repositories.
 

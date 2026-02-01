@@ -102,6 +102,3 @@ jobs:
       build-script:  ${{ inputs.armor-checker-build-script }}
     permissions:
       contents: read
-      pull-requests: read
-  
-
