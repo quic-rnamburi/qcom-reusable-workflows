@@ -36,6 +36,15 @@ on:
         type: string
         default: ''
         description: 'Extra options as YAML/JSON object string, e.g., {"body-char-limit": 60, "sub-char-limit": 50, "check-blank-line": true}'
+      enable-armor-checkers:
+        required: false
+        type: boolean
+        default: true
+      armor-checker-build-script:
+        required: false
+        type: string
+        default: 'ci/build.sh'
+        description: 'Build script path used by ABI checker in armor-checkers'
 
 jobs:
   semgrep-scan:
@@ -84,3 +93,15 @@ jobs:
       extra-options: ${{ inputs.commit-msg-check-extra-options }}    
     permissions:
       contents: read
+  
+  armor-checkers:
+    if: ${{ inputs.enable-armor-checkers }}
+    name: ARMOR Checkers
+    uses: ./.github/workflows/resuable-armor-checkers.yml
+    with:
+      build-script:  ${{ inputs.armor-checker-build-script }}
+    permissions:
+      contents: read
+      pull-requests: read
+  
+
