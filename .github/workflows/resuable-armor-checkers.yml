@@ -114,7 +114,7 @@ jobs:
           exit 0
 
       - name: Run ABI checks
-        if: ${{ steps.cf.outputs.code != 'true' }}
+        if: ${{ steps.cf.outputs.code == 'true' }}
         uses: qualcomm-linux-stg/armor/abi_checks@abi_checks
         with:
           event-name:   ${{ needs.prepare.outputs.event_name }}
