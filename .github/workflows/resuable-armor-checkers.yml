@@ -26,7 +26,7 @@ permissions:
 
 jobs:
   prepare:
-    name: Prepare event variables
+    name: Setup ARMOR checkers event variables
     runs-on: ubuntu-latest
     outputs:
       event_name:  ${{ steps.ev.outputs.event_name }}
