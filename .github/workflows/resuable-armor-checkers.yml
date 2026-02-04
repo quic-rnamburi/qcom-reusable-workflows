@@ -92,18 +92,32 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Paths filter (only run ABI on code changes)
+      - name: Detect code changes
         id: cf
-        uses: dorny/paths-filter@v3
-        with:
-          base: ${{ needs.prepare.outputs.base_sha }}
-          ref:  ${{ needs.prepare.outputs.head_sha }}
-          filters: |
-            code:
-              - '**/*.h'
-              - '**/*.hpp'
-              - '**/*.c'
-              - '**/*.cpp'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BASE="${{ needs.prepare.outputs.base_sha }}"
+          HEAD="${{ needs.prepare.outputs.head_sha }}"
+
+          # List changed files between base and head
+          changed_files="$(git diff --name-only "$BASE" "$HEAD" || true)"
+
+          echo "Changed files:"
+          echo "$changed_files" || true
+
+          # Filter to code extensions
+          code_files="$(echo "$changed_files" | grep -E '\.(h|hpp|c|cpp)$' || true)"
+
+          if [[ -n "${code_files}" ]]; then
+            echo "code=true" >> "$GITHUB_OUTPUT"
+            echo "Matched code files:"
+            echo "$code_files"
+          else
+            echo "code=false" >> "$GITHUB_OUTPUT"
+            echo "No matching code files found."
+          fi
 
       - name: Stop early if no code changes
         if: ${{ steps.cf.outputs.code != 'true' }}
