@@ -45,6 +45,11 @@ on:
         type: string
         default: 'ci/build.sh'
         description: 'Build script path used by ABI checker in armor-checkers'
+      armor-checker-runner:
+        required: false
+        type: string
+        default: '["ubuntu-latest"]'
+        description: 'AWS runner used by ARMOR Checkers'
 
 jobs:
   semgrep-scan:
@@ -100,5 +105,6 @@ jobs:
     uses: ./.github/workflows/resuable-armor-checkers.yml
     with:
       build-script:  ${{ inputs.armor-checker-build-script }}
+      runner:  ${{ inputs.armor-checker-runner }}
     permissions:
       contents: read
