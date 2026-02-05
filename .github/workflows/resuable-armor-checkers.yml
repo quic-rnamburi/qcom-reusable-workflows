@@ -20,6 +20,14 @@ on:
         type: string
         default: 'ci/build.sh'
         description: 'Build script path used by ABI checker'
+      runner:
+        required: false
+        type: string
+        default: '["ubuntu-latest"]'
+        description: >
+          Runner selector as JSON.
+          Use '["ubuntu-latest"]' for GitHub-hosted,
+          or '{"group":"<runner-group>","labels":["self-hosted","<label>"]}' for self-hosted runner groups.
 
 permissions:
   contents: read
@@ -27,7 +35,7 @@ permissions:
 jobs:
   prepare:
     name: Setup ARMOR checkers event variables
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runner) }}
     outputs:
       event_name:  ${{ steps.ev.outputs.event_name }}
       head_sha:    ${{ steps.ev.outputs.head_sha }}
@@ -67,7 +75,7 @@ jobs:
   armor-api-check:
     name: Run ARMOR API Check
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runner) }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -85,7 +93,7 @@ jobs:
   abi-check:
     name: Run ABI Check
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runner) }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
